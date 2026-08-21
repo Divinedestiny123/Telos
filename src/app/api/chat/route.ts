@@ -13,8 +13,9 @@ const anthropic = new Anthropic({
 const QUICKSWAP_V3_ROUTER = '0x4B9f4d2435Ef65559567e5DbFC1BbB37abC43B57';
 
 async function resolveToken(symbolOrAddress: string): Promise<{ address: string, decimals: number }> {
-  // Force Native USDC over Bridged USDC.e to avoid balance issues
-  if (symbolOrAddress.toUpperCase() === 'USDC') return { address: '0xB6CEceAB302E2E4948951eE7843FC24E92933061', decimals: 6 };
+  // QuickSwap V3 on X Layer has liquidity for Bridged USDC.e, NOT Native USDC.
+  // Using Native USDC will cause QuickSwap swaps to revert.
+  if (symbolOrAddress.toUpperCase() === 'USDC') return { address: '0x74b7f16337b8972027f6196a17a631ac6de26d22', decimals: 6 };
 
   try {
     // Fetch official X Layer Token List
