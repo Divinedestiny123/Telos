@@ -53,6 +53,7 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
   const [isMounted, setIsMounted] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const createdChatIdRef = useRef<string | null>(null);
 
   // Wallet Logic
   const { address, isConnected, chainId } = useAccount();
@@ -143,6 +144,7 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
 
   // Sync state only when navigating between different chats
   useEffect(() => {
+    if (createdChatIdRef.current && createdChatIdRef.current === chatId) return;
     setMessages(initialMessages);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
@@ -175,6 +177,7 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
       try {
         isNewChat = true;
         activeChatId = await createChatSilent("New Chat", address);
+        createdChatIdRef.current = activeChatId;
         router.replace(`/?chatId=${activeChatId}`);
       } catch (error) {
         console.error("Error creating chat", error);
