@@ -9,7 +9,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
-  title: 'OKX AI - Chat-to-Trade',
+  title: 'Telos - Chat-to-Trade',
   description: 'A premium AI-powered trading assistant on X Layer',
 };
 
