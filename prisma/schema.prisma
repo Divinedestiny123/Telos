@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Chat {
+  id            String    @id @default(uuid())
+  walletAddress String
+  title         String
+  createdAt     DateTime  @default(now())
+  messages      Message[]
+}
+
+model Message {
+  id              String   @id @default(uuid())
+  chatId          String
+  role            String
+  content         String
+  isTransaction   Boolean  @default(false)
+  transactionData String?
+  createdAt       DateTime @default(now())
+  chat            Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}
