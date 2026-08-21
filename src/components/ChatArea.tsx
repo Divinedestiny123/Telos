@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Bot, Send, User, PanelLeft, Wallet, X, LogOut, Menu, Copy, Check } from 'lucide-react';
 import { TransactionPreview } from '@/components/TransactionPreview';
 import { saveMessage, createChatSilent, updateChatTitle } from '@/actions/chat';
-import { useConnect, useAccount, useDisconnect } from 'wagmi';
+import { useConnect, useAccount, useDisconnect, useSwitchChain } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useSidebar } from './SidebarContext';
@@ -55,9 +55,17 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Wallet Logic
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
+
+  // Auto-switch to X Layer Mainnet if on the wrong network
+  useEffect(() => {
+    if (isConnected && chainId && chainId !== 196 && switchChain) {
+      switchChain({ chainId: 196 });
+    }
+  }, [isConnected, chainId, switchChain]);
   const router = useRouter();
   const { toggleSidebar } = useSidebar();
 
