@@ -170,7 +170,7 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
     const loadingId = (Date.now() + 1).toString();
     setMessages((prev) => [...prev, { id: loadingId, role: 'assistant', content: '...' }]);
 
-    let activeChatId = chatId;
+    let activeChatId = chatId || createdChatIdRef.current;
     let isNewChat = false;
 
     if (!activeChatId && address) {
@@ -178,7 +178,7 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
         isNewChat = true;
         activeChatId = await createChatSilent("New Chat", address);
         createdChatIdRef.current = activeChatId;
-        router.replace(`/?chatId=${activeChatId}`);
+        // Do not router.replace yet, to avoid unmounting ChatArea and losing the loading state
       } catch (error) {
         console.error("Error creating chat", error);
       }
@@ -234,6 +234,10 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
       // Save assistant message to DB
       if (activeChatId) {
         await saveMessage(activeChatId, 'assistant', data.content || 'Error fetching response', data.isTransaction, data.transactionData);
+      }
+      
+      if (isNewChat && activeChatId) {
+        router.replace(`/?chatId=${activeChatId}`);
       }
     } catch (error: any) {
       const errorMsg = error.message || 'Network Error.';
