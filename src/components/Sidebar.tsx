@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Settings, Briefcase } from 'lucide-react';
+import { useState, Suspense } from 'react';
+import { Settings, Briefcase, Loader2 } from 'lucide-react';
 import { SidebarHeader } from '@/components/SidebarHeader';
 import { ClientSidebarHistory } from '@/components/ClientSidebarHistory';
 import { useSidebar } from '@/components/SidebarContext';
@@ -31,7 +31,9 @@ export function Sidebar() {
         <div className="flex-1 overflow-y-auto px-2 py-4 custom-scrollbar">
           <h3 className="text-[11px] font-semibold text-zinc-600 uppercase tracking-widest mb-3 px-2 group-[.sidebar-collapsed]/sidebar:hidden">Recent</h3>
           
-          <ClientSidebarHistory />
+          <Suspense fallback={<div className="text-zinc-500 text-xs text-center py-4"><Loader2 className="w-4 h-4 animate-spin mx-auto" /></div>}>
+            <ClientSidebarHistory />
+          </Suspense>
         </div>
 
         {/* Bottom Section */}
