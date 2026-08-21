@@ -64,8 +64,8 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
   const handleWalletClick = () => {
     try {
       if (!isConnected) {
-        // Use the generic injected connector which perfectly proxies to OKX if it's the active extension
-        const targetConnector = connectors[0];
+        // Prefer okxWallet if it exists, otherwise fallback to the first generic connector
+        const targetConnector = connectors.find(c => c.id === 'okxWallet') || connectors[0];
                                 
         if (targetConnector) {
           connect({ connector: targetConnector }, {

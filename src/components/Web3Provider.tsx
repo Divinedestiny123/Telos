@@ -9,7 +9,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const config = createConfig({
   chains: [xLayer],
   connectors: [
-    injected() // Use generic injected to avoid "Provider not found" errors with specific targets
+    injected({
+      target() {
+        return {
+          id: 'okxWallet',
+          name: 'OKX Wallet',
+          provider: typeof window !== 'undefined' ? (window as any).okxwallet : undefined,
+        }
+      }
+    }),
+    injected() // Fallback to generic injected (MetaMask, etc) if OKX Wallet is not found
   ],
   transports: {
     [xLayer.id]: http(),
