@@ -39,10 +39,10 @@ async function resolveToken(symbolOrAddress: string): Promise<{ address: string,
   }
 
   // Fallbacks for critical tokens if API fails
-  if (symbolOrAddress.toUpperCase() === 'USDT') return { address: '0x1e4a5963ab6d7679c5300684f5599b1099bfd975', decimals: 6 };
+  if (symbolOrAddress.toUpperCase() === 'USDT') return { address: '0x1E4a5963aBFD975d8c9021ce480b42188849D41d', decimals: 6 };
   if (symbolOrAddress.toUpperCase() === 'WETH') return { address: '0x5A77f1443D16ee5761d310e38b62f77f726bC71c', decimals: 18 };
-  if (symbolOrAddress.toUpperCase() === 'OKB') return { address: '0xdf54b6c6195ea4fa9a2407d579ff176f57876a31', decimals: 18 };
-  if (symbolOrAddress.toUpperCase() === 'WBTC') return { address: '0x814041eaec55b8ef2f056dcd69651bf279e8cd5e', decimals: 8 };
+  if (symbolOrAddress.toUpperCase() === 'OKB' || symbolOrAddress.toUpperCase() === 'WOKB') return { address: '0xe538905cf8410324e03A5A23C1c177a474D59b2b', decimals: 18 };
+  if (symbolOrAddress.toUpperCase() === 'WBTC') return { address: '0xea034fb02eb1808c2cc3adbc15f447b93cbe08e1', decimals: 8 };
 
   // Generate a deterministic synthetic address for unknown tokens (e.g. SHIB, PEPE on OKX Futures)
   // Use sha256 to get 64 hex chars, take the first 40 (20 bytes), and pad with 0x.
