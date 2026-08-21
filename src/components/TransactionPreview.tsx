@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRightLeft, Loader2, CheckCircle2, AlertCircle, ExternalLink, ShieldCheck, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useAccount, useReadContract, useSendTransaction, useWaitForTransactionReceipt, useWalletClient } from 'wagmi';
+import { useAccount, useReadContract, useSendTransaction, useWaitForTransactionReceipt, useWalletClient, useSwitchChain } from 'wagmi';
 import { encodeFunctionData, parseEther, maxUint256, parseUnits } from 'viem';
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 
@@ -35,6 +35,8 @@ export function TransactionPreview({ data }: { data?: string }) {
   const [livePrice, setLivePrice] = useState<number>(0);
   const [priceHistory, setPriceHistory] = useState<any[]>([]);
   const [entryPriceMock, setEntryPriceMock] = useState<number>(0);
+  const { chainId } = useAccount();
+  const { switchChain } = useSwitchChain();
   
 
 
@@ -154,6 +156,10 @@ export function TransactionPreview({ data }: { data?: string }) {
     if (!walletClient || !address || !oracleAddress || !isPerps) return;
     
     try {
+      if (chainId !== 196 && switchChain) {
+        switchChain({ chainId: 196 });
+        return;
+      }
       setIsSyncingOracle(true);
       const tickerSymbol = asset === 'WBTC' ? 'BTC-USDT' : (asset === 'WETH' ? 'ETH-USDT' : `${asset}-USDT`);
       const response = await fetch(`https://www.okx.com/api/v5/market/ticker?instId=${tickerSymbol}`);
@@ -187,6 +193,10 @@ export function TransactionPreview({ data }: { data?: string }) {
   };
 
   const handleApprove = () => {
+    if (chainId !== 196 && switchChain) {
+      switchChain({ chainId: 196 });
+      return;
+    }
     setIsApproving(true);
     setForceAllowance(false);
     
@@ -219,6 +229,10 @@ export function TransactionPreview({ data }: { data?: string }) {
 
   const executeTrade = () => {
     if (!parsedData || !parsedData.to) return;
+    if (chainId !== 196 && switchChain) {
+      switchChain({ chainId: 196 });
+      return;
+    }
     setIsApproving(false);
     
     sendTransaction({
