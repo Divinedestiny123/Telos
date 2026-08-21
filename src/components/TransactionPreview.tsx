@@ -249,6 +249,21 @@ export function TransactionPreview({ data }: { data?: string }) {
     });
   };
 
+  useEffect(() => {
+    if (tradeSuccessful && !isPerps) {
+      try {
+        const hist = JSON.parse(localStorage.getItem('telos_spot_history') || '[]');
+        const newTrade = { tokenIn, tokenOut, amount, hash, timestamp: Date.now() };
+        // prevent duplicate entries
+        if (!hist.find((h: any) => h.hash === newTrade.hash && h.amount === newTrade.amount)) {
+          hist.unshift(newTrade);
+          localStorage.setItem('telos_spot_history', JSON.stringify(hist));
+          window.dispatchEvent(new Event('swap-history-updated'));
+        }
+      } catch(e) {}
+    }
+  }, [tradeSuccessful, isPerps, tokenIn, tokenOut, amount, hash]);
+
   let status = 'idle';
   if (forceSuccess || (isSuccess && receipt?.status === 'success')) status = 'success';
   else if (isSuccess && receipt?.status === 'reverted') status = 'error';

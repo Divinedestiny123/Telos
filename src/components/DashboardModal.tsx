@@ -36,6 +36,7 @@ export function DashboardModal({ isOpen, onClose }: { isOpen: boolean, onClose: 
   const [priceHistories, setPriceHistories] = useState<Record<string, any[]>>({});
   const [syncedAssets, setSyncedAssets] = useState<Record<string, boolean>>({});
   const [isSyncing, setIsSyncing] = useState<Record<string, boolean>>({});
+  const [recentSwaps, setRecentSwaps] = useState<any[]>([]);
 
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/okx/xlayer-tokenlist/main/xlayer.tokenlist.json')
@@ -99,6 +100,20 @@ export function DashboardModal({ isOpen, onClose }: { isOpen: boolean, onClose: 
     const interval = setInterval(fetchLivePrices, 2500);
     return () => clearInterval(interval);
   }, [isOpen, tokenNames]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const fetchSwaps = () => {
+      try {
+        const hist = JSON.parse(localStorage.getItem('telos_spot_history') || '[]');
+        setRecentSwaps(hist);
+      } catch(e) {}
+    };
+    fetchSwaps();
+    window.addEventListener('swap-history-updated', fetchSwaps);
+    return () => window.removeEventListener('swap-history-updated', fetchSwaps);
+  }, [isOpen]);
+
   const { address } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { writeContract, isPending: isClosing } = useWriteContract();
@@ -378,6 +393,43 @@ export function DashboardModal({ isOpen, onClose }: { isOpen: boolean, onClose: 
                   </div>
                 )}
             </div>
+
+            {/* Recent Swaps */}
+            {recentSwaps.length > 0 && (
+              <div className="mt-8">
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2 mb-4">
+                  <Activity className="w-5 h-5 text-blue-500" />
+                  Recent Swaps
+                </h3>
+                <div className="space-y-3">
+                  {recentSwaps.map((swap, i) => (
+                    <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl gap-3 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
+                      <div className="flex flex-col">
+                        <div className="font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                          Swap {swap.tokenIn} for {swap.tokenOut}
+                        </div>
+                        <div className="text-sm text-zinc-500">
+                          {swap.amount} {swap.tokenIn}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-zinc-500">{new Date(swap.timestamp).toLocaleString()}</span>
+                        {swap.hash && (
+                          <a 
+                            href={`https://www.oklink.com/xlayer/tx/${swap.hash}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="px-3 py-1.5 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1"
+                          >
+                            Explorer <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
