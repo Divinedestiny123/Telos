@@ -299,9 +299,19 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-medium tracking-tight text-zinc-900 dark:text-white">Welcome to Telos</h2>
-                  <p className="text-zinc-500 text-sm max-w-sm mx-auto">Connect your OKX Wallet to access your secure trading terminal.</p>
+                  <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Welcome to Telos</h2>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-[280px] mx-auto">
+                    Connect your OKX Wallet to access your secure trading terminal.
+                  </p>
                 </div>
+
+                <button 
+                  onClick={handleWalletClick}
+                  className="mt-6 flex items-center gap-2 px-8 py-3 bg-[#CDFF00] hover:bg-[#b8e600] text-black font-semibold rounded-full transition-transform hover:scale-105 shadow-[0_0_20px_rgba(205,255,0,0.3)] cursor-pointer"
+                >
+                  <Wallet className="w-5 h-5" />
+                  <span>Connect Wallet</span>
+                </button>
               </div>
             ) : messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center mt-32 space-y-6 text-center animate-fade-in">
