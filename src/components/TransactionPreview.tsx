@@ -199,8 +199,13 @@ export function TransactionPreview({ data }: { data?: string }) {
     }
     setIsApproving(true);
     setForceAllowance(false);
-    
-    const targetAddress = isPerps ? parsedData?.to : '0x62fCaa21e25D4166DEf7202157A3C8B7DEdDB87a'; // Spot uses aggregator
+    const targetAddress = parsedData?.to;
+
+    if (!targetAddress) {
+      toast.error("Invalid transaction target address");
+      setIsApproving(false);
+      return;
+    }
 
     const approveData = encodeFunctionData({
       abi: [{
