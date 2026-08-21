@@ -40,7 +40,7 @@ async function resolveToken(symbolOrAddress: string): Promise<{ address: string,
   }
 
   // Fallbacks for critical tokens if API fails
-  if (symbolOrAddress.toUpperCase() === 'USDT') return { address: '0x1E4a5963aBFD975d8c9021ce480b42188849D41d', decimals: 6 };
+  if (symbolOrAddress.toUpperCase() === 'USDT') return { address: '0x779Ded0c9e1022225f8E0630b35a9b54bE713736', decimals: 6 };
   if (symbolOrAddress.toUpperCase() === 'WETH') return { address: '0x5A77f1443D16ee5761d310e38b62f77f726bC71c', decimals: 18 };
   if (symbolOrAddress.toUpperCase() === 'OKB' || symbolOrAddress.toUpperCase() === 'WOKB') return { address: '0xe538905cf8410324e03A5A23C1c177a474D59b2b', decimals: 18 };
   if (symbolOrAddress.toUpperCase() === 'WBTC') return { address: '0xea034fb02eb1808c2cc3adbc15f447b93cbe08e1', decimals: 8 };
