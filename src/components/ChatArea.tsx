@@ -93,7 +93,7 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
               console.error("Connection error:", error);
               
               // If we tried to use injected and it failed, fallback to WalletConnect automatically
-              if (error.name === 'ConnectorNotFoundError' && wcConnector && targetConnector !== wcConnector) {
+              if (((error.name as string) === 'ConnectorNotFoundError' || (error.name as string) === 'ProviderNotFoundError') && wcConnector && targetConnector !== wcConnector) {
                 connect({ connector: wcConnector });
                 return;
               }
