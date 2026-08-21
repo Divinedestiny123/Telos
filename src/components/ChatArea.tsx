@@ -64,15 +64,21 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
   const handleWalletClick = () => {
     try {
       if (!isConnected) {
+        const isOkxAvailable = typeof window !== 'undefined' && (window as any).okxwallet;
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // If on mobile and OKX Wallet is not active in the browser, redirect to OKX App
+        if (isMobile && !isOkxAvailable) {
+          const dappUrl = window.location.href;
+          window.location.href = `okx://wallet/dapp/url?dappUrl=${encodeURIComponent(dappUrl)}`;
+          return;
+        }
+
         const okxConnector = connectors.find(c => c.id === 'okxWallet');
-        const wcConnector = connectors.find(c => c.id === 'walletConnect');
         const genericInjected = connectors.find(c => c.id === 'injected');
         
-        // Check if OKX is injected (either desktop extension or mobile dApp browser)
-        const isOkxAvailable = typeof window !== 'undefined' && (window as any).okxwallet;
-        
-        // Prioritize okxWallet. If not installed, fallback to WalletConnect (QR code / mobile deep link).
-        const targetConnector = isOkxAvailable ? (okxConnector || genericInjected) : wcConnector;
+        // Prioritize okxWallet. If not installed, fallback to generic injected to trigger standard error.
+        const targetConnector = isOkxAvailable ? (okxConnector || genericInjected) : (okxConnector || genericInjected);
                                 
         if (targetConnector) {
           connect({ connector: targetConnector }, {
@@ -92,20 +98,12 @@ export function ChatArea({ initialMessages, chatId }: { initialMessages: Message
             onError: (error) => {
               console.error("Connection error:", error);
               
-              // If we tried to use injected and it failed, fallback to WalletConnect automatically
-              if (((error.name as string) === 'ConnectorNotFoundError' || (error.name as string) === 'ProviderNotFoundError') && wcConnector && targetConnector !== wcConnector) {
-                connect({ connector: wcConnector });
-                return;
-              }
-
               toast((t) => (
                 <div className="flex items-center gap-3">
                   <div className="flex flex-col">
                     <span className="font-semibold text-[#CDFF00]">Connection Failed</span>
                     <span className="text-sm text-zinc-300">
-                      {targetConnector.id === 'walletConnect' 
-                        ? 'Failed to connect via mobile. Please try again.' 
-                        : 'Please open your OKX Wallet extension to unlock it.'}
+                      Please install or open the OKX Wallet extension.
                     </span>
                   </div>
                   <button onClick={() => toast.dismiss(t.id)} className="p-1 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors">
