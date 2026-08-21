@@ -29,6 +29,8 @@ export function SidebarHeader() {
   };
 
   const toggleSidebar = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
+    
     const sidebar = document.getElementById('main-sidebar');
     if (sidebar) {
       sidebar.classList.toggle('w-64');
@@ -45,7 +47,7 @@ export function SidebarHeader() {
         {isCollapsed ? (
           <button 
             onClick={toggleSidebar}
-            className="group relative w-9 h-9 rounded-full overflow-hidden shrink-0 flex items-center justify-center transition-transform hover:scale-110 shadow-[0_0_10px_rgba(205,255,0,0.2)] cursor-pointer"
+            className="hidden lg:flex group relative w-9 h-9 rounded-full overflow-hidden shrink-0 items-center justify-center transition-transform hover:scale-110 shadow-[0_0_10px_rgba(205,255,0,0.2)] cursor-pointer"
             title="Open Sidebar"
           >
             <img src="/telos_bot.png" alt="Telos" className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 duration-300" />
@@ -57,7 +59,7 @@ export function SidebarHeader() {
           <>
             <button 
               onClick={toggleSidebar}
-              className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors shrink-0 -ml-2 cursor-pointer"
+              className="hidden lg:block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors shrink-0 -ml-2 cursor-pointer"
               title="Close Sidebar"
             >
               <PanelLeft className="w-5 h-5" />
