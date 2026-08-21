@@ -35,6 +35,7 @@ export function TransactionPreview({ data }: { data?: string }) {
   const [livePrice, setLivePrice] = useState<number>(0);
   const [priceHistory, setPriceHistory] = useState<any[]>([]);
   const [entryPriceMock, setEntryPriceMock] = useState<number>(0);
+  const [forceSuccess, setForceSuccess] = useState(false);
   const { chainId } = useAccount();
   const { switchChain } = useSwitchChain();
   
@@ -249,7 +250,7 @@ export function TransactionPreview({ data }: { data?: string }) {
   };
 
   let status = 'idle';
-  if (isSuccess && receipt?.status === 'success') status = 'success';
+  if (forceSuccess || (isSuccess && receipt?.status === 'success')) status = 'success';
   else if (isSuccess && receipt?.status === 'reverted') status = 'error';
   else if (isMining) status = 'mining';
   else if (isSigning) status = 'signing';
@@ -451,18 +452,22 @@ export function TransactionPreview({ data }: { data?: string }) {
             <Loader2 className="w-4 h-4 animate-spin text-[#CDFF00]" />
             {isApproving ? 'Approving...' : 'Mining Transaction...'}
           </button>
-          {isApproving && (
             <button 
               onClick={() => {
-                setForceAllowance(true);
-                setIsApproving(false);
-                resetTx();
+                if (isApproving) {
+                  setForceAllowance(true);
+                  setIsApproving(false);
+                  resetTx();
+                } else {
+                  setForceSuccess(true);
+                  setTradeSuccessful(true);
+                  resetTx();
+                }
               }}
               className="text-xs text-zinc-500 hover:text-zinc-400 underline py-1"
             >
               Already confirmed in wallet? Click here to continue
             </button>
-          )}
         </div>
       )}
 
